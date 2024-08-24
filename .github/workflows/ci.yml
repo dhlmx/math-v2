@@ -39,6 +39,6 @@ jobs:
           server: ${{secrets.FTP_SERVER}}
           username: ${{secrets.FTP_USER}}
           password: ${{secrets.FTP_PASSWORD}}
-          local-dir: ./dist/
+          local-dir: ./dist/browser/
           server-dir: public_html/math/
           dangerous-clean-slate: true
