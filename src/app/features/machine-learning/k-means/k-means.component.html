@@ -1,6 +1,41 @@
-<p>k-means works!<br /><br />
-  <ng-container *ngFor="let centroid of kmeans.centroids" >
-    <span>{{ centroid }}</span><br />
-  </ng-container>
-</p>
+<app-message-modal
+  [visible]="appService.process.processingMode"
+  [message]="appService.process.message">
+</app-message-modal>
 
+<p-panel id="htmlContent">
+  <ng-template pTemplate="header">
+    <div><span class="pi pi-share-alt"></span>&nbsp;KMeans</div>
+  </ng-template>
+
+  <ng-template pTemplate="icons">
+    <div>
+      <!--
+      <button type="button" pButton (click)="create()" title="Create expression" class="p-button-outlined p-button-info">
+        <em class="pi pi-plus-circle"></em>
+      </button>
+      -->
+      <button type="button" pButton (click)="onClickPrint()" title="Print list of expressions" class="p-button-outlined p-button-success">
+        <em class="pi pi-print"></em>
+      </button>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="body">
+    <div class="grid bg-gray-900">
+      <div class="col-12 md:col-6">
+        <ng-container *ngFor="let centroid of kmeans.centroids" >
+          <span>{{ centroid }}</span><br />
+        </ng-container>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="grid">
+      <div class="col-12 text-center">
+        <!-- <button type="button" label="Calculate" pButton title="Calculate" [disabled]="form.invalid" (click)="onClickCalculate()" class="p-button-outlined p-button-info"></button> -->
+      </div>
+    </div>
+  </ng-template>
+</p-panel>

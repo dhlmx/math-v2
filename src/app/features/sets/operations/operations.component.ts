@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { complement, intersection, union } from '../../../core/utilities/numeric';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+
+// Services
+import { AppService } from '../../../core/services/app.service';
+import { complement, intersection, parseSet, union } from '../../../core/utilities/numeric';
+import { PdfService } from '../../../core/services/pdf.service';
 
 @Component({
   selector: 'app-operations',
@@ -8,19 +13,68 @@ import { complement, intersection, union } from '../../../core/utilities/numeric
 })
 export class OperationsComponent implements OnInit {
 
-  u: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-  a: number[] = [0, 1, 3, 5, 7, 9];
-  b: number[] = [0, 2, 4, 6, 8, 10];
+  universe: any[] = [];
+  setA: any[] = [];
+  setB: any[] = [];
 
-  aub: number[] = [];
-  anb: number[] = [];
-  ac: number[] = [];
-  bc: number[] = [];
+  aub: any[] = [];
+  anb: any[] = [];
+  ac: any[] = [];
+  bc: any[] = [];
+
+  controls = {
+    universe: new FormControl('', [Validators.required]),
+    setA: new FormControl('', [Validators.required]),
+    setB: new FormControl('', [Validators.required])
+  };
+
+  form = new FormGroup({ ...this.controls });
+
+  constructor(public appService: AppService, private pdfService: PdfService) { }
 
   ngOnInit(): void {
-    this.aub = union(this.a, this.b);
-    this.anb = intersection(this.a, this.b);
-    this.ac = complement(this.u, this.a);
-    this.bc = complement(this.u, this.b);
+    this.appService.process.start('Loading...');
+
+    setTimeout(() => {
+      this.appService.process.stop();
+    }, 1000);
   }
+
+  onClickCalculate = (): void => {
+    this.appService.process.start('Calculating...');
+
+    setTimeout(() => {
+      const universe = `${this.controls.universe.value}`,
+          setA = `${this.controls.setA.value}`,
+          setB = `${this.controls.setB.value}`;
+
+      this.universe = parseSet(universe.split(','));
+      this.setA = parseSet(setA.split(','));
+      this.setB = parseSet(setB.split(','));
+
+      this.aub = union(this.setA, this.setB);
+      this.anb = intersection(this.setA, this.setB);
+      this.ac = complement(this.universe, this.setA);
+      this.bc = complement(this.universe, this.setB);
+
+      this.appService.process.stop();
+    }, 1000);
+  }
+
+  onClickPrint = (): void => {
+    this.appService.process.start('Printing...');
+
+    this.pdfService.exportPDF('htmlContent', 'resultados').subscribe({
+      next: (status) => {
+        console.info('exportPDF', status);
+      },
+      error: (e) => {
+        console.info('exportPDF:ERROR', e);
+      },
+      complete: () => {
+        this.appService.process.stop();
+      }
+    });
+  }
+
 }

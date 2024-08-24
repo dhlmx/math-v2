@@ -14,7 +14,7 @@ export class CombinationsGroup {
     let combinations = 1;
 
     this.combinations.forEach(combination => {
-      combinations *= combination.calculation;
+      combinations *= combination.calculate();
     });
 
     return combinations;

@@ -1,3 +1,5 @@
+import { Observable, of } from 'rxjs';
+
 export const complement = (u: number[], a: number[]): number[] => {
   const x: number[] = [];
 
@@ -11,10 +13,28 @@ export const complement = (u: number[], a: number[]): number[] => {
 },
 
 divisors = (a: number): number[] => {
+  const divs: number[] = [];
+
+  if (a < 1) {
+    return divs;
+  }
+
+  divs.push(1);
+
+  for (let i = 2; i <= a; i++) {
+    if (a % i === 0) {
+      divs.push(i);
+    }
+  }
+
+  return divs;
+},
+
+divisorsAsync = (a: number): Observable<number[]> => {
     const divs: number[] = [];
 
     if (a < 1) {
-      return divs;
+      return of(divs);
     }
 
     divs.push(1);
@@ -25,7 +45,7 @@ divisors = (a: number): number[] => {
       }
     }
 
-    return divs;
+    return of(divs);
 },
 
 expansion = (x: number, base: number): number[] => {
@@ -82,17 +102,20 @@ isOdd = (x: number): boolean => {
   return x % 2 !== 0;
 },
 
-isPrime = (x: number): boolean => {
-  const divs = divisors(x);
-  return divs.length === 2;
+isPrime = (x: number|number[]): boolean => {
+  if (typeof x === 'number') {
+    return divisors(x).length === 2;
+  } else {
+    return x.length === 2
+  }
 },
 
-isRelativePrimeOf = (a: number, b: number): boolean => {
+isRelativePrimeOf = (a: number|number[], b: number): boolean => {
   return maximalCommonDivisor(a, b) === 1;
 },
 
-maximalCommonDivisor = (a: number, b: number): number => {
-  const aDivisors = divisors(a),
+maximalCommonDivisor = (a: number|number[], b: number): number => {
+  const aDivisors = typeof a === 'number' ? divisors(a) : a,
       bDivisors = divisors(b),
       commonDivisors: number[] = [];
 
@@ -107,18 +130,80 @@ maximalCommonDivisor = (a: number, b: number): number => {
   return commonDivisors.length > 0 ? commonDivisors[commonDivisors.length - 1] : 0;
 },
 
-union = (a: number[], b: number[]): number[] => {
-  const aub: number[] = [];
+parseSet = (set: string[]): any[] => {
+  const setParsed: any[] = [];
 
-  a.forEach(ai => {
-    if (!aub.includes(ai)) {
-      aub.push(ai);
+  set.forEach(item => {
+    let itemParsed = parseFloat(item.trim());
+
+    if (isNaN(itemParsed)) {
+      itemParsed = parseInt(item);
+    }
+
+    setParsed.push(isNaN(itemParsed) ? item : itemParsed);
+  });
+
+  return setParsed;
+},
+
+primesSet = (divisors: number[]): number[][] => {
+  const prime = Math.max(...divisors);
+
+  if (divisors.length === 0 || divisors.length === 1 || prime ===1) {
+    return [];
+  }
+
+  if (divisors.length === 2) {
+    return [[1, prime], [prime, 1]];
+  }
+
+  const primes: number[][] = [];
+  let divs: number[] = [];
+
+  console.clear();
+
+  [...divisors].reverse().forEach(div => {
+    let quotient = prime / div,
+        remainder = prime % div;
+
+    if ((quotient === 1 || quotient === prime) && remainder === 0) {
+      primes.push([quotient, div]);
+    } else {
+      while (quotient !== 1) {
+        divs.push(div);
+
+        [...divisors].reverse().forEach(innerDiv => {
+          if (quotient > 1 && innerDiv <= quotient) {
+            let innerQuotient = quotient / innerDiv,
+                innerRemainder = quotient % innerDiv;
+
+            if (innerQuotient === 1 && innerRemainder === 0) {
+              divs.push(innerDiv)
+              primes.push(divs);
+              divs = [];
+              quotient = innerQuotient;
+            }
+          }
+        });
+      }
     }
   });
 
-  b.forEach(bi => {
-    if (!aub.includes(bi)) {
-      aub.push(bi);
+  return primes;
+},
+
+union = (setA: any[], setB: any[]): any[] => {
+  const aub: any[] = [];
+
+  setA.forEach(aItem => {
+    if (!aub.includes(aItem)) {
+      aub.push(aItem);
+    }
+  });
+
+  setB.forEach(bItem => {
+    if (!aub.includes(bItem)) {
+      aub.push(bItem);
     }
   });
 

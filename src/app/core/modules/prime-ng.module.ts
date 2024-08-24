@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-// import { CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { AccordionModule } from 'primeng/accordion';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { AvatarModule } from 'primeng/avatar';
@@ -100,7 +100,7 @@ import { VirtualScrollerModule } from 'primeng/virtualscroller';
 @NgModule({
   declarations: [],
   imports: [
-    // CommonModule,
+    CommonModule,
     AccordionModule,
     // AutoCompleteModule,
     // AvatarModule,
@@ -208,7 +208,7 @@ import { VirtualScrollerModule } from 'primeng/virtualscroller';
     // CaptchaModule,
     CardModule,
     // CarouselModule,
-    CascadeSelectModule,
+    // CascadeSelectModule,
     ChartModule,
     // CheckboxModule,
     // ChipModule,
@@ -241,7 +241,7 @@ import { VirtualScrollerModule } from 'primeng/virtualscroller';
     InputTextModule,
     InputTextareaModule,
     // LightboxModule,
-    ListboxModule,
+    // ListboxModule,
     // MegaMenuModule,
     // MenuModule,
     MenubarModule,

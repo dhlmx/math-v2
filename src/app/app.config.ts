@@ -7,6 +7,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
+import { PrimeNgModule } from './core/modules/prime-ng.module';
+import { CoreModule } from './core/core.module';
+import { SharedModule } from 'primeng/api';
+import { PdfService } from './core/services/pdf.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -20,7 +24,11 @@ export const appConfig: ApplicationConfig = {
       BrowserModule,
       BrowserAnimationsModule,
       FormsModule,
-      ReactiveFormsModule
+      ReactiveFormsModule,
+      PrimeNgModule,
+      CoreModule,
+      SharedModule,
+      PdfService
     )
   ]
 };

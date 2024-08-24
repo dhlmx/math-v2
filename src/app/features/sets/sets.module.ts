@@ -7,6 +7,9 @@ import { SharedModule } from '../../core/modules/shared.module';
 
 // Components
 import { OperationsComponent } from './operations/operations.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CoreModule } from '../../core/core.module';
+import { PrimeNgModule } from '../../core/modules/prime-ng.module';
 
 @NgModule({
     declarations: [
@@ -14,7 +17,11 @@ import { OperationsComponent } from './operations/operations.component';
     ],
     imports: [
         CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
         SetsRoutingModule,
+        CoreModule,
+        PrimeNgModule,
         SharedModule
     ]
 })
