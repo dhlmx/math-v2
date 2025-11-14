@@ -1,4 +1,4 @@
-export const hasSameElements = (serie: string[], elements: string[]): boolean => {
+export const hasSameElements = (serie: any[], elements: any[]): boolean => {
   let sameElements = serie.length === elements.length;
 
   if (sameElements) {
@@ -12,10 +12,10 @@ export const hasSameElements = (serie: string[], elements: string[]): boolean =>
   return sameElements;
 },
 
-someHasSameElements = (series: string[][], elements: string[]): boolean => {
+someHasSameElements = (series: any[][], elements: any[]): boolean => {
   return series.some(serie => hasSameElements(serie, elements));
 },
 
-transformToMultipleArray = (elements: string[]): string[][] => {
+transformToMultipleArray = (elements: any[]): any[][] => {
   return elements.map(element => [element]);
 };

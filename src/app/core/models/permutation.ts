@@ -1,4 +1,4 @@
-import { factorial } from './calculate';
+import { factorial } from '../utilities/calculate';
 
 export class Permutation {
 

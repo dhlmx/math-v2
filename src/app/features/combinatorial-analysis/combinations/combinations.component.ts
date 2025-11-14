@@ -37,7 +37,7 @@ export class CombinationsComponent implements OnInit {
 
   form = new FormGroup({ ...this.controls });
 
-  variation = new Variation();
+  // variation = new Variation();
   combination = new Combination();
   permutation = new Permutation();
   combinationByGroup = new CombinationByGroup();
@@ -62,6 +62,8 @@ export class CombinationsComponent implements OnInit {
 
   combinationOfBritishesAndAmericans = new CombinationsGroup();
   combinationOfBritishesAndAmericansII = new CombinationsGroups();
+
+  variation = new Variation();
 
   jsonData = '';
   blobData: Blob = new Blob();
@@ -122,7 +124,7 @@ export class CombinationsComponent implements OnInit {
   }
 
   private reset = (): void => {
-    this.variation = new Variation();
+    // this.variation = new Variation();
     this.combination = new Combination();
     this.permutation = new Permutation();
     this.combinationByGroup = new CombinationByGroup();
@@ -161,6 +163,7 @@ export class CombinationsComponent implements OnInit {
 
   resolve = (): void => {
     switch (this.problem.value) {
+      /*
       case 'MN-01':
         this.variation = new Variation([
           ['a', 'b'], ['a', 'b'], ['a', 'b']
@@ -191,16 +194,28 @@ export class CombinationsComponent implements OnInit {
         this.variation.init();
         this.createJsonData(this.variation.calculate(), this.variation.list(false));
         break;
+      */
       case 'MN-05':
         this.combination = new Combination({
-          elements: ['A', 'B', 'C', 'D'],
-          length: 2,
-          excludeArrangements: false
+          items: ['A', 'B', 'C', 'D'],
+          positions: 2,
+          selection: 0,
+          ignoreElementPosition: false,
+          allowItemsRepeatedByVariation: false,
+          allowForRepeatedVariations: false,
+          allowSwaps: false
         });
 
         this.combination.init();
-        this.createJsonData(this.combination.calculate(), this.combination.list(false));
+
+        console.info('MN-05', this.combination.list(false));
+
+        this.variation = new Variation({ items: ['A', 'B', 'C', 'D'], positions: 2 });
+        console.info('MN-05->Variation', this.variation.init(false, false));
+
+        // this.createJsonData(this.combination.calculate(), this.combination.list(false));
         break;
+      /*
       case 'MN-06':
         this.combination = new Combination({
           elements: ['S1', 'S2', 'S3', 'S4', 'S5'],
@@ -247,6 +262,7 @@ export class CombinationsComponent implements OnInit {
         this.combination.init();
         this.createJsonData(this.combination.calculate(), this.combination.list(false));
         break;
+      */
       default:
         break;
     }
@@ -278,6 +294,7 @@ export class CombinationsComponent implements OnInit {
     //   );
 
       // Algebra Superior
+      /*
       this.variationOfTwoOfFourChars = new Combination(
         { elements: ['a', 'b', 'c', 'd'], length: 2, excludeArrangements: false }
       );
@@ -349,6 +366,7 @@ export class CombinationsComponent implements OnInit {
           { elements: ['BR1', 'BR2', 'BR3', 'BR4', 'BR5', 'BR6', 'BR7'], length: 2, excludeArrangements: true }
         ]
       ]);
+      */
 
 
   }

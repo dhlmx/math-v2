@@ -20,7 +20,7 @@ export class CombinationsGroups {
       let subtotal = 1;
 
       combinations.forEach(combination => {
-        subtotal *= combination.calculate();
+        subtotal *= -1; // combination.calculate();
       });
 
       this.total += subtotal;

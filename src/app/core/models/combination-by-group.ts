@@ -1,5 +1,5 @@
 import { ICombinationByGroup } from '../interfaces/icombination-by-group';
-import { factorial } from './calculate';
+import { factorial } from '../utilities/calculate';
 import { Combination } from './combination';
 
 export class CombinationByGroup {
@@ -22,9 +22,9 @@ export class CombinationByGroup {
         this.elements = this.elements.slice(0, this.elements.length - this.groups[index - 1]);
       }
 
-      this.combinations.push(
-        new Combination({ elements: this.elements, length: group, excludeArrangements: this.excludeArrangements })
-      );
+      // this.combinations.push(
+      //   new Combination({ items: this.elements, positions: group, ignoreElementPosition: this.excludeArrangements })
+      // );
     });
   }
 
@@ -32,7 +32,7 @@ export class CombinationByGroup {
     let combinations = 1;
 
     this.combinations.forEach(combination => {
-      combinations *= combination.calculate();
+      combinations *= -1; // combination.calculate();
     });
 
     return this.excludeArrangements ? combinations / factorial(this.groups.length) : combinations;

@@ -1,85 +1,198 @@
 import { ICombination } from '../interfaces/icombination';
 import { someHasSameElements, transformToMultipleArray } from '../utilities/array.service';
 import { sortMultipleArrayOfWords } from '../utilities/sort.service';
-import { factorial } from './calculate';
+import { factorial } from '../utilities/calculate';
 
-export class Combination {
+export class Combination implements ICombination {
+  items: any[] = [];
+  positions = 0;
+  selection = 0;
+  ignoreElementPosition = false;
+  allowItemsRepeatedByVariation = false;
+  allowForRepeatedVariations = false;
+  allowSwaps = false;
 
-  elements: any[] = [];
-  length = 0;
-  excludeArrangements = false;
-
-  private total = 0;
+  private _combinations = 0;
+  private _swaps = 0;
+  private _variations = 0;
   private combinations: any[][] = [];
+  private swaps: any[][] = [];
+  private variations: any[][] = [];
 
   constructor(source?: ICombination) {
     if (source) {
-      this.elements = source.elements;
-      this.length = source.length;
-      this.excludeArrangements = source.excludeArrangements;
+      this.items = source.items;
+      this.positions = source.positions;
+      this.ignoreElementPosition = source.ignoreElementPosition;
+      this.allowItemsRepeatedByVariation = source.allowItemsRepeatedByVariation;
+      this.allowForRepeatedVariations = source.allowForRepeatedVariations;
+      this.allowSwaps = source.allowSwaps;
     }
-
-    this.total = 0;
-    this.combinations = [];
   }
 
-  calculate = (): number => {
-    return this.total;
-  }
+  private calculate = (): void => {
+    this._variations = Math.pow(this.items.length, this.positions);
+    this._swaps = factorial(this.items.length) / (factorial(this.positions) * factorial(this.items.length - this.positions));
+    this._combinations = this._swaps / this.selection;
 
-  private calculation = (): void => {
-    if (this.excludeArrangements) {
-      this.total = factorial(this.elements.length) / (factorial(this.length) * factorial(this.elements.length - this.length));
-      return;
-    }
-
-    // return factorial(this.elements.length) / factorial(this.elements.length - this.length);
-
-    let iterator = this.elements.length;
-    this.total = 1;
-
-    while (iterator > (this.elements.length - this.length)) {
-      this.total *= iterator;
-      iterator--;
-    }
   }
 
   private combine = (): void => {
-    let series = transformToMultipleArray(this.elements),
-        iterator = 1;
+    this.variations = [];
+    this.swaps = [];
+    this.combinations = [];
 
-    while (iterator < this.length) {
-      let innerSeries: any[][] = [];
+    let position = 1,
+        combinations: any[][] = [],
+        swaps: any[][] = [],
+        variations: any[][] = [],
+        innerCombinations: any[][] = [],
+        innerSwaps: any[][] = [],
+        innerVariations: any[][] = [];
 
-      for (const element of this.elements) {
-        series.forEach(subSerie => {
-          if (this.excludeArrangements) {
-            if (!subSerie.includes(element)
-              && !someHasSameElements(innerSeries, subSerie.concat(element))
-            ) {
-              innerSeries.push(subSerie.concat(element));
+    // Variations
+    while (position <= this.positions) {
+      if (position === 1) {
+        this.items.forEach(item => {
+          innerVariations.push([item]);
+        });
+      } else {
+        innerVariations = [];
+
+        variations.forEach(variation => {
+          this.items.forEach(item => {
+            let innerVariation = [...variation];
+            innerVariation.push(item);
+            innerVariations.push(innerVariation);
+          });
+        });
+      }
+
+      variations = [...innerVariations];
+      position++;
+    }
+
+    this.variations = [...variations];
+
+    // Combinations
+    position = 1;
+
+    while (position <= this.positions) {
+      if (position === 1) {
+        this.items.forEach(item => {
+          innerCombinations.push([item]);
+        });
+      } else {
+        innerCombinations = [];
+
+        combinations.forEach(combination => {
+          this.items.forEach(item => {
+            let innerCombination = [...combination];
+            if (!innerCombination.includes(item)) {
+              innerCombination.push(item);
+              innerCombinations.push(innerCombination);
             }
-          } else if (!subSerie.includes(element)) {
-              innerSeries.push(subSerie.concat(element));
+          });
+        });
+      }
+
+      combinations = [...innerCombinations];
+      position++;
+    }
+
+    this.combinations = [...combinations];
+
+    // Swaps
+    position = 1;
+
+    while (position <= this.positions) {
+      if (position === 1) {
+        this.items.forEach(item => {
+          innerSwaps.push([item]);
+        });
+      } else {
+        innerSwaps = [];
+
+        swaps.forEach(swap => {
+          this.items.forEach(item => {
+            let innerSwap = [...swap];
+            if (!innerSwap.includes(item) && !someHasSameElements(innerSwaps, innerSwap.concat(item))) {
+              innerSwap.push(item);
+              innerSwaps.push(innerSwap);
+            }
+          });
+        });
+      }
+
+      swaps = [...innerSwaps];
+      position++;
+    }
+
+    this.swaps = [...swaps];
+
+    /*
+    this.items.forEach(itemX => {
+      let variation = [itemX];
+      this.items.forEach(itemY => {
+        let innerVariation = [...variation];
+        innerVariation.push(itemY);
+        this.variations.push(innerVariation);
+      });
+    });
+    */
+
+    // Each variation includes an item already, then position = 1
+    /*
+    while (position < this.positions) {
+      for (const item of this.items) {
+        this.combinations.forEach(combination => {
+          if (!combination.includes(item)) {
+            combination.push(item);
+          }
+        });
+
+        this.swaps.forEach(swap => {
+          if (!swap.includes(item) && !someHasSameElements(this.swaps, swap.concat(item))) {
+            swap.push(item);
           }
         });
       }
 
-      series = innerSeries;
-      iterator++;
+      position++;
     }
-
-    this.combinations = series;
-  }
+    */
+ }
 
   init = (): void => {
-    this.calculation();
+    this.calculate();
     this.combine();
-
-    console.info('Combination', this.calculate(), this.list(false));
   }
 
-  public list = (sort: boolean): any[][] => {
-    return sort ? sortMultipleArrayOfWords(this.combinations, this.excludeArrangements) : this.combinations;
+  public list = (sort: boolean): any /*{ variations: any[][], combinatios: any[][], swaps: any[][] }*/ => {
+    return {
+      nVariations: this._variations,
+      variations: sort ? sortMultipleArrayOfWords(this.variations, this.ignoreElementPosition) : this.variations,
+      nCombinations: this._combinations,
+      combinatios: sort ? sortMultipleArrayOfWords(this.combinations, this.ignoreElementPosition) : this.combinations,
+      nSwaps: this._swaps,
+      swaps: sort ? sortMultipleArrayOfWords(this.swaps, this.ignoreElementPosition) : this.swaps
+    }
   }
 }
+
+  // let iterator = this.items.length;
+  // this._total = 1;
+
+  // while (iterator > (this.items.length - this.positions)) {
+  //   this._total *= iterator;
+  //   iterator--;
+  // }
+  // if (this.ignoreElementPosition) {
+  //   if (!subSerie.includes(item)
+  //     && !someHasSameElements(innerSeries, subSerie.concat(item))
+  //   ) {
+  //     innerSeries.push(subSerie.concat(item));
+  //   }
+  // } else if (!subSerie.includes(item)) {
+  //     innerSeries.push(subSerie.concat(item));
+  // }

@@ -1,5 +1,9 @@
 export interface ICombination {
-  elements: any[],
-  length: number,
-  excludeArrangements: boolean
+  items: any[];
+  positions: number;
+  selection: number;
+  ignoreElementPosition: boolean;
+  allowItemsRepeatedByVariation: boolean;
+  allowForRepeatedVariations: boolean;
+  allowSwaps: boolean;
 }
